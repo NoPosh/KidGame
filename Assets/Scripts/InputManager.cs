@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class InputManager : MonoBehaviour
@@ -7,16 +8,14 @@ public class InputManager : MonoBehaviour
     public GameObject character;
     Rigidbody rb;
     public GameObject mainCamera;
-
-    public float speed = 100.0f;
-
+    public bool isJumping;
+    public float speed = 3000.0f;
+    public float jumpingForce = 500.0f;
     
     public float verticalMouseSensetivity = 100.0f;
     public float horizontalMouseSensetivity = 100.0f;
     float xRotation = 0.0f;
-
-    //Нужен поворот камеры вверх-вниз + поворот персонажа влево-вправо
-    
+    float fallingCoef = 5.0f;
 
     private void Start()
     {
@@ -28,23 +27,26 @@ public class InputManager : MonoBehaviour
     void FixedUpdate()
     {
         CharacterMovement();
-
         CharacterRotation();
+        CharacterJumping();
     }
-
+    void CharacterJumping()
+    {
+        if (Input.GetAxis("Jump")!=0 && !isJumping)
+        {
+            isJumping = true;
+            Vector3 jumpingDirection = character.transform.up;
+            rb.AddForce(jumpingDirection * jumpingForce, ForceMode.Impulse);
+        }
+        if (rb.velocity.y != 0)
+        {
+            rb.velocity += Vector3.up * Physics.gravity.y * fallingCoef * Time.deltaTime;
+        }
+    }
     void CharacterMovement()            //Движение персонажа
     {
-        
-
         float horizontalInput = Input.GetAxis("Horizontal");
         float verticalInput = Input.GetAxis("Vertical");
-        
-
-        //Vector3 movement = new Vector3(horizontalInput, 0, verticalInput).normalized * speed;
-        //rb.MovePosition(movement + rb.position);
-        //character.transform.forward
-        //rb.velocity = new Vector3(movement.x, movement.y, movement.z);
-
 
         if (horizontalInput > 0)           //Проверка горизонтального ввода
         {
@@ -71,19 +73,46 @@ public class InputManager : MonoBehaviour
 
     }
 
+    private void OnCollisionStay(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            isJumping = false;
+            Debug.Log("Ground");
+        }
+      
+    }
+    private void OnCollisionExit(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            isJumping = true;
+        }
+    }
     void CharacterRotation()        //Поворот камеры + персонажа
     {
+        
         float mouseX = Input.GetAxis("Mouse X") * horizontalMouseSensetivity * Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * verticalMouseSensetivity * Time.deltaTime;
+
+        if (mouseX != 0)
+        {
+            rb.constraints &= ~RigidbodyConstraints.FreezeRotationY;
+            rb.constraints |= RigidbodyConstraints.FreezeRotationX;
+            rb.constraints |= RigidbodyConstraints.FreezeRotationZ;
+        }
+        else
+        {
+            rb.constraints |= RigidbodyConstraints.FreezeRotationY; 
+            rb.constraints |= RigidbodyConstraints.FreezeRotationX;
+            rb.constraints |= RigidbodyConstraints.FreezeRotationZ;
+        }
 
         xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);
 
         mainCamera.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
         character.transform.Rotate(Vector3.up * mouseX);
-        
-        
-
     }
 
 }
