@@ -2,15 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WoodGun : MonoBehaviour
+public class WeaponRecoil : MonoBehaviour
 {
-    // Start is called before the first frame update
+    [SerializeField] private float recoilAmount = 0.1f;
     void Start()
     {
         
     }
 
-    // Update is called once per frame
+    
     void Update()
     {
         
