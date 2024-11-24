@@ -1,3 +1,4 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -7,30 +8,34 @@ using UnityEngine;
 public class RayCast : MonoBehaviour
 {
     [SerializeField] private Camera MainCamera;
+    [SerializeField] private Transform mainCamera;
     [SerializeField] private Health Enemy;
     [SerializeField] private Transform enemy;
     [SerializeField] private Rigidbody enemyBody;
     [SerializeField] private float coolDown;
     [SerializeField] private float bulletForce;
-    private float timer = 0f;
+    [SerializeField] private float recoilDispersion;
+    private float timerCoolDown = 0f;
+    private Quaternion originalRotation;
 
+
+    private void Start()
+    {
+        originalRotation = transform.localRotation;
+
+    }
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Mouse0) && timer >= coolDown)
+        if (Input.GetKey(KeyCode.Mouse0) && timerCoolDown >= coolDown)
         {
             HitController();
-            timer = 0f;
+            StartCoroutine(DoRecoil());
+            timerCoolDown = 0f;
         }
         else
         {
-            timer += Time.deltaTime;
+            timerCoolDown += Time.deltaTime;
         }
-        if (Enemy.health == 0)
-        {
-            enemyBody.useGravity = false;
-            enemyBody.AddForce(Vector3.up);
-        }
-
     }
     
     private void HitController()
@@ -44,15 +49,21 @@ public class RayCast : MonoBehaviour
             {
                 hitedBody.AddForce(ray.direction * bulletForce, ForceMode.Impulse);
             }
-            if(hit.transform.tag == "Finish")
-            {
-                Enemy.health -= 10;
-                enemyBody.AddForce(ray.direction * bulletForce, ForceMode.Impulse);
-                if (Enemy.health < 0)
-                {
-                    Enemy.health = 0;
-                }
-            }
         }
+    }
+
+    private IEnumerator DoRecoil()
+    {
+        for (float i = 0; i < coolDown / 2; i += Time.deltaTime)
+        {
+            transform.localRotation = Quaternion.Slerp(transform.localRotation, new Quaternion(originalRotation.x - recoilDispersion, originalRotation.y, originalRotation.z, originalRotation.w), i);
+            yield return null;
+        }
+        for (float i = 0; i < coolDown / 2; i += Time.deltaTime)
+        {
+            transform.localRotation = Quaternion.Slerp(transform.localRotation, originalRotation, i);
+            yield return null;
+        }
+        transform.localRotation = originalRotation;
     }
 }

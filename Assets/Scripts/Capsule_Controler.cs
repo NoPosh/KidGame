@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.CompilerServices;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Capsule_Controler : MonoBehaviour
@@ -14,18 +15,27 @@ public class Capsule_Controler : MonoBehaviour
     [SerializeField] private float speed;
     [SerializeField] private float sensitivity;
     [SerializeField] private float jumpForce;
+    private float tempSpeed;
+    private Vector3 originalCameraPosition;
 
     private void Start()
     {
-        Cursor.lockState = CursorLockMode.Locked;       
+        tempSpeed = speed;
+        originalCameraPosition = playerCamera.localPosition;
+        Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
     private void Update()
     {
+        float xAngle = Input.GetAxis("Mouse X");
+        float yAngle = Input.GetAxis("Mouse Y");
         playerMovementInput = new Vector3(Input.GetAxisRaw("Horizontal"), 0f, Input.GetAxisRaw("Vertical"));
-        playerMouseInput = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
+        playerMouseInput = new Vector2(xAngle, yAngle);
         MovePlayer();
-        MovePlayerCamera();
+        if (xAngle != 0 || yAngle != 0)
+        {
+            MovePlayerCamera();
+        }
     }
 
     private void MovePlayer()
@@ -39,7 +49,22 @@ public class Capsule_Controler : MonoBehaviour
                 playerBody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             }
         }
-        
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            speed = tempSpeed * 1.5f;
+        }
+        else
+        {
+            speed = tempSpeed;
+        }
+        if (Input.GetKey(KeyCode.LeftControl))
+        {
+            playerCamera.localPosition = originalCameraPosition - Vector3.up;
+        }
+        else
+        {
+            playerCamera.localPosition = originalCameraPosition;
+        }
     }
 
     private void MovePlayerCamera()
