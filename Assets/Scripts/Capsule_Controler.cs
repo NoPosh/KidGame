@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class Capsule_Controler : MonoBehaviour
 {
-    private Vector3 playerMovementInput;
+    private static Vector3 playerMovementInput;
     private Vector2 playerMouseInput;
     private float xRot = 0;
     [SerializeField] private Rigidbody playerBody;
@@ -16,8 +16,10 @@ public class Capsule_Controler : MonoBehaviour
     [SerializeField] private float sensitivity;
     [SerializeField] private float jumpForce;
     private float tempSpeed;
+    private bool isJumping;
+    private bool isRunning;
     private Vector3 originalCameraPosition;
-
+    
     private void Start()
     {
         tempSpeed = speed;
@@ -38,28 +40,51 @@ public class Capsule_Controler : MonoBehaviour
         }
     }
 
+    public Vector3 GetPlayerMovementInput()
+    {
+        return playerMovementInput;
+    }
+    public bool GetPlayerJump()
+    {
+        return isJumping;
+    }
     private void MovePlayer()
     {
         Vector3 MoveVector = transform.TransformDirection(playerMovementInput).normalized * speed;
         playerBody.MovePosition(playerBody.position + MoveVector * Time.deltaTime);
         if (StayOnGrond())
         {
+            isJumping = false;
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 playerBody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+               
             }
+            else
+            {
+             
+            }
+        }
+        else
+        {
+            isJumping = true;
         }
         if (Input.GetKey(KeyCode.LeftShift))
         {
             speed = tempSpeed * 1.5f;
+            isRunning = true;
+            
         }
         else
         {
             speed = tempSpeed;
+            isRunning = false;
+           
         }
         if (Input.GetKey(KeyCode.LeftControl))
         {
             playerCamera.localPosition = originalCameraPosition - Vector3.up;
+            
         }
         else
         {
