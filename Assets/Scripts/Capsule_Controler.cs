@@ -8,24 +8,28 @@ using UnityEngine;
 public class Capsule_Controler : MonoBehaviour
 {
     private static Vector3 playerMovementInput;
-    private Vector2 playerMouseInput;
-    private float xRot = 0;
+    public Vector2 playerMouseInput;
+    public float xRot = 0;
+
     [SerializeField] private Rigidbody playerBody;
-    [SerializeField] private Transform playerCamera;
+    [SerializeField] public Transform playerCamera;
     [SerializeField] private float speed;
-    [SerializeField] private float sensitivity;
+    [SerializeField] public float sensitivity;
     [SerializeField] private float jumpForce;
     private float tempSpeed;
     private bool isJumping;
     private bool isRunning;
     private Vector3 originalCameraPosition;
     
+
+
     private void Start()
     {
         tempSpeed = speed;
         originalCameraPosition = playerCamera.localPosition;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        
     }
     private void Update()
     {
@@ -60,10 +64,7 @@ public class Capsule_Controler : MonoBehaviour
                 playerBody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
                
             }
-            else
-            {
-             
-            }
+
         }
         else
         {
@@ -95,7 +96,7 @@ public class Capsule_Controler : MonoBehaviour
     private void MovePlayerCamera()
     {
         xRot -= playerMouseInput.y * sensitivity * Time.deltaTime;
-        if(xRot < -90 || xRot > 90)
+        if (xRot < -90 || xRot > 90)
         {
             xRot += playerMouseInput.y * sensitivity * Time.deltaTime;
         }

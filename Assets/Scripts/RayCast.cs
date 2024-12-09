@@ -17,12 +17,12 @@ public class RayCast : MonoBehaviour
     [SerializeField] private float recoilDispersion;
     private float timerCoolDown = 0f;
     private Quaternion originalRotation;
-
+    [SerializeField] public Transform rightHandLoc;
+    [SerializeField] public Transform leftHandLoc;
 
     private void Start()
     {
         originalRotation = transform.localRotation;
-
     }
     private void Update()
     {
