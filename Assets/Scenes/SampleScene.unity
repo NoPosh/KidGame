@@ -1262,7 +1262,7 @@ CapsuleCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Radius: 0.5
   m_Height: 2
@@ -1341,11 +1341,15 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1174680110}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8b84ed6cf694c394eb8e1bc95fa9fe95, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerMovementInput: {x: 0, y: 0, z: 0}
+  playerMouseInput: {x: 0, y: 0}
+  xRot: 0
+  yRot: 0
   playerBody: {fileID: 1174680111}
   playerCamera: {fileID: 963194228}
   speed: 5

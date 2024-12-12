@@ -1,8 +1,4 @@
-using Cinemachine;
 using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class RayCast : MonoBehaviour
@@ -17,11 +13,11 @@ public class RayCast : MonoBehaviour
     [SerializeField] private float recoilDispersion;
     private float timerCoolDown = 0f;
     private Quaternion originalRotation;
-    [SerializeField] public Transform rightHandLoc;
-    [SerializeField] public Transform leftHandLoc;
-
-    private void Start()
+    
+    private void Start()    
     {
+       
+        
         originalRotation = transform.localRotation;
     }
     private void Update()

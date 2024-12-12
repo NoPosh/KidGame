@@ -1,51 +1,48 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 
 public class Animations : MonoBehaviour
 {
-    private float v;
-    private float h;
-    private bool isJumping;
-    [SerializeField] private Animator animator;
-    [SerializeField] private Capsule_Controler capsule;
-    [SerializeField] private RayCast gun;
-    [SerializeField] private Transform rightHandEl;
-    [SerializeField] private Transform leftHandEl;
-    [SerializeField] private Transform spineUpper;
-    private float yRotation;
+    private Animator animator;
+    private InputManager inputManager;   
+
+    private float x;
+    private float y;
+    private bool jump;
+    private float sit;
+    private bool pickUp;
+    private bool drop;
+    private float withGun;
     void Start()
-    {
-    
+    {            
+        animator = GetComponent<Animator>();
+        inputManager = InputManager.Instance;
     }
     void Update()
     {
+        if (!PickUpGun.canPickUp) withGun = 1;
+        else withGun = 0;
 
-        HandsToGun();
-        //HeadToCamera();
-        //v = capsule.GetPlayerMovementInput().x;
-        //h = capsule.GetPlayerMovementInput().z;
-        //isJumping = capsule.GetPlayerJump();
+        pickUp = inputManager.GetPlayerPickUp();
+        drop = inputManager.GetPlayerDrop();
+        jump = inputManager.GetPlayerJump();
+        sit = inputManager.GetPlayerSit();
+        x = inputManager.GetPlayerMovement().x;
+        y = inputManager.GetPlayerMovement().y;
+        sendParameters();
+    }   
 
-        //animator.SetBool("isJumping", isJumping);
-        //animator.SetFloat("v", v);
-        //animator.SetFloat("h", h);
-    }
-
-   
-    void HandsToGun()
+    void sendParameters()
     {
-        rightHandEl.transform.position = gun.rightHandLoc.transform.position;
-        //Vector3 pogr = new Vector3(0, -5, 0);
-        //Quaternion q = new Quaternion(0, 0, 0, 0);
-        //leftHandEl.SetLocalPositionAndRotation(pogr, q);
-        leftHandEl.transform.position = gun.leftHandLoc.transform.position;
-        
-    }
-    
-    void HeadToCamera()
-    {
-        spineUpper.transform.localRotation = Quaternion.Euler(capsule.xRot, 0f, 0f);
-        
+        animator.SetFloat("x", x);
+        animator.SetFloat("y", y);
+        animator.SetFloat("sit", sit);
+        if (jump) animator.SetTrigger("jump");
+        if (pickUp) animator.SetTrigger("pickUp");
+        if (drop) animator.SetTrigger("drop");
+        animator.SetFloat("withGun", withGun);
     }
 }
