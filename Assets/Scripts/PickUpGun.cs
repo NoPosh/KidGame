@@ -12,7 +12,7 @@ public class PickUpGun : MonoBehaviour
     private float distance =20f;
     private GameObject currentWeapon;
     public static bool canPickUp;
-
+    
 
     void Start()
     {
@@ -35,6 +35,7 @@ public class PickUpGun : MonoBehaviour
                 currentWeapon.transform.position = transform.position;
                 currentWeapon.transform.localEulerAngles = new Vector3(-49.869f, 43.437f, 29.188f);
                 canPickUp = false;
+                
             }
         }
     }

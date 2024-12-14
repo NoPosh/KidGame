@@ -3,8 +3,7 @@ using UnityEngine;
 
 public class RayCast : MonoBehaviour
 {
-    [SerializeField] private Camera MainCamera;
-    [SerializeField] private Transform mainCamera;
+    [SerializeField] private Camera MainCamera;    
     [SerializeField] private Health Enemy;
     [SerializeField] private Transform enemy;
     [SerializeField] private Rigidbody enemyBody;
@@ -16,7 +15,7 @@ public class RayCast : MonoBehaviour
     
     private void Start()    
     {
-       
+        MainCamera = Camera.main;
         
         originalRotation = transform.localRotation;
     }

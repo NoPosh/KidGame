@@ -15,9 +15,11 @@ public class CinemachinePOV : CinemachineExtension
 
     private InputManager inputManager;
     private Vector3 startingRot;
+    private CinemachineCameraOffset offset;
 
     protected override void Awake()
     {
+        offset = GetComponent<CinemachineCameraOffset>();
         inputManager = InputManager.Instance;
         base.Awake();
     }
@@ -38,6 +40,9 @@ public class CinemachinePOV : CinemachineExtension
                 startingRot.y += -1*deltaInput.y * Time.deltaTime * verticalSpeed;
                 startingRot.y = Mathf.Clamp(startingRot.y, -borderAngle, borderAngle);
                 state.RawOrientation = Quaternion.Euler(startingRot.y, startingRot.x, 0f);
+
+                if (inputManager.GetPlayerSit() > 0) offset.enabled = true;
+                else offset.enabled = false;
             }
         }
     }
