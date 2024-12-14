@@ -21,9 +21,16 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private float playerSpeed = 7f;
     [SerializeField]
+    private float playerRunSpeed = 9f;
+    [SerializeField]
+    private float playerSitSpeed = 5f;
+    [SerializeField]
     private float jumpHeight = 3f;
     [SerializeField]
     private float gravityValue = -9.81f;
+    [SerializeField]
+    private float tempSpeed;
+    private float defaultRunSpeed;
     
 
     void Start()
@@ -35,7 +42,7 @@ public class PlayerController : MonoBehaviour
         Cursor.visible = false;        
         controller = GetComponent<CharacterController>();
         inputManager = InputManager.Instance;        
-        
+        defaultRunSpeed = playerRunSpeed;
     }
 
     private bool StayOnGrond()
@@ -71,19 +78,43 @@ public class PlayerController : MonoBehaviour
         yRot += deltaInput.x * Time.deltaTime * 10f;
         transform.localRotation = Quaternion.Euler(0f, yRot, 0f);
 
-        if (inputManager.GetPlayerSit() == 1 && groundedPlayer)
+        if (inputManager.GetPlayerSit() > 0 && groundedPlayer)
         {
-            //cameraTransform.localPosition = originalCameraPosition - Vector3.up;
-            cameraObj.localPosition = originalCameraPosition - Vector3.up;
-            controller.Move(move * Time.deltaTime * playerSpeed * 0.5f);
+            if (playerRunSpeed == defaultRunSpeed)
+            {
+                tempSpeed = playerSitSpeed;                
+            }
+            else
+            {
+                tempSpeed = playerRunSpeed;
+                move.z = 0f;                
+                tempSpeed -= tempSpeed*Time.deltaTime * 100;
+                if (tempSpeed <= playerSitSpeed) playerRunSpeed = defaultRunSpeed;
+            }
         }
-        else controller.Move(move * Time.deltaTime * playerSpeed);
-
-        if (inputManager.GetPlayerJump() && groundedPlayer && inputManager.GetPlayerSit() != 1)
+        else
         {
-            playerVelocity.y += Mathf.Sqrt(jumpHeight * -2.0f * gravityValue);
+            if (!groundedPlayer) tempSpeed = playerRunSpeed;
+            else tempSpeed = playerSpeed;            
+        }       
+
+        if (!groundedPlayer && inputManager.GetPlayerSit() > 0)
+        {
+            tempSpeed = playerRunSpeed;            
+            tempSpeed -= tempSpeed * Time.deltaTime * 100;
         }
 
+        if (inputManager.GetPlayerJump() && groundedPlayer && inputManager.GetPlayerSit() < 1)
+        {
+            playerVelocity.y += Mathf.Sqrt(jumpHeight * -2.0f * gravityValue);     
+        }
+
+        if (inputManager.GetPlayerRun() > 0)
+        {
+            playerRunSpeed = defaultRunSpeed;
+            tempSpeed = playerRunSpeed;
+        }
+        controller.Move(move * Time.deltaTime * tempSpeed);
         playerVelocity.y += gravityValue * Time.deltaTime;
         controller.Move(playerVelocity * Time.deltaTime);
     }

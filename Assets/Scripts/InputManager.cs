@@ -37,4 +37,5 @@ public class InputManager : MonoBehaviour
     public float GetPlayerSit() { return playerControls.Player.Sit.ReadValue<float>(); }
     public bool GetPlayerPickUp() { return playerControls.Player.PickUp.triggered; }
     public bool GetPlayerDrop() { return playerControls.Player.Drop.triggered; }
+    public float GetPlayerRun() { return playerControls.Player.Run.ReadValue<float>(); }
 }
